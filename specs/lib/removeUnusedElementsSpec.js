@@ -457,11 +457,11 @@ describe("removeUnusedElements", () => {
     expect(Object.keys(gltf)).toContain("extensions");
     expect(Object.keys(gltf.extensions)).toContain("KHR_lights_punctual");
     expect(Object.keys(gltf.extensions.KHR_lights_punctual)).toContain(
-      "lights"
+      "lights",
     );
 
     expect(gltf.extensions.KHR_lights_punctual.lights.length).toBe(
-      remaining.lights.length
+      remaining.lights.length,
     );
 
     gltf.extensions.KHR_lights_punctual.lights.forEach((element, index) => {
@@ -688,7 +688,7 @@ describe("removes unused materials, textures, images, samplers", () => {
     expect(gltf.materials[0].occlusionTexture.index).toEqual(0);
     expect(gltf.materials[0].normalTexture.index).toEqual(1);
     expect(
-      gltf.materials[1].extensions.KHR_techniques_webgl.values.diffuse.index
+      gltf.materials[1].extensions.KHR_techniques_webgl.values.diffuse.index,
     ).toEqual(2);
   });
 
@@ -948,6 +948,67 @@ describe("removes unused materials, textures, images, samplers", () => {
     expect(gltf.accessors[0].name).toEqual("T");
     expect(gltf.accessors[1].name).toEqual("R");
     expect(gltf.accessors[2].name).toEqual("S");
+  });
+
+  it("does not remove CESIUM_primitive_outline accessors", () => {
+    const gltf = {
+      accessors: [
+        {
+          name: "unused",
+        },
+        {
+          name: "position",
+        },
+        {
+          name: "outlineIndices",
+        },
+        {
+          name: "normal",
+        },
+        {
+          name: "indices",
+        },
+        {
+          name: "unused",
+        },
+      ],
+      meshes: [
+        {
+          primitives: [
+            {
+              attributes: {
+                POSITION: 1,
+                NORMAL: 3,
+              },
+              indices: 4,
+              extensions: {
+                CESIUM_primitive_outline: {
+                  indices: 2,
+                },
+              },
+            },
+          ],
+        },
+      ],
+      nodes: [
+        {
+          mesh: 0,
+        },
+      ],
+      extensionsUsed: ["CESIUM_primitive_outline"],
+    };
+
+    removeUnusedElements(gltf, ["accessor"]);
+
+    expect(gltf.accessors.length).toEqual(4);
+    expect(gltf.accessors[0].name).toEqual("position");
+    expect(gltf.accessors[1].name).toEqual("outlineIndices");
+    expect(gltf.accessors[2].name).toEqual("normal");
+    expect(gltf.accessors[3].name).toEqual("indices");
+
+    expect(
+      gltf.meshes[0].primitives[0].extensions.CESIUM_primitive_outline.indices,
+    ).toEqual(1);
   });
 
   it("does not remove EXT_feature_metadata buffer views and textures", () => {

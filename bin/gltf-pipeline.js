@@ -136,6 +136,16 @@ const argv = yargs
       type: "boolean",
       default: dracoDefaults.unifiedQuantization,
     },
+    baseColorTextureNames: {
+      describe:
+        "Names of uniforms that should be considered to refer to base color textures when updating from the KHR_techniques_webgl extension to PBR materials.",
+      type: "array",
+    },
+    baseColorFactorNames: {
+      describe:
+        "Names of uniforms that should be considered to refer to base color factors when updating from the KHR_techniques_webgl extension to PBR materials.",
+      type: "array",
+    },
   })
   .parse(args);
 
@@ -161,7 +171,7 @@ if (!defined(outputPath)) {
   }
   outputPath = path.join(
     inputDirectory,
-    `${inputName}-processed${outputExtension}`
+    `${inputName}-processed${outputExtension}`,
   );
 }
 
@@ -192,6 +202,8 @@ const options = {
   keepLegacyExtensions: argv.keepLegacyExtensions,
   name: outputName,
   dracoOptions: dracoOptions,
+  baseColorTextureNames: argv.baseColorTextureNames,
+  baseColorFactorNames: argv.baseColorFactorNames,
 };
 
 const inputIsBinary = inputExtension === ".glb";
@@ -243,5 +255,5 @@ read(inputPath)
   })
   .catch(function (error) {
     console.log(error);
-    process.exit(1);
+    process.exitCode = 1;
   });

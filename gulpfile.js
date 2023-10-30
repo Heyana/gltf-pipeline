@@ -7,7 +7,6 @@ const fsExtra = require("fs-extra");
 const gulp = require("gulp");
 const Jasmine = require("jasmine");
 const JasmineSpecReporter = require("jasmine-spec-reporter").SpecReporter;
-const open = require("open");
 const path = require("path");
 const Promise = require("bluebird");
 const yargs = require("yargs");
@@ -48,7 +47,7 @@ async function test() {
     new JasmineSpecReporter({
       displaySuccessfulSpec:
         !defined(argv.suppressPassed) || !argv.suppressPassed,
-    })
+    }),
   );
 
   jasmine.exitOnCompletion = false;
@@ -84,9 +83,8 @@ function coverage() {
       " JASMINE_CONFIG_PATH=specs/jasmine.json",
     {
       stdio: [process.stdin, process.stdout, process.stderr],
-    }
+    },
   );
-  open("coverage/lcov-report/index.html");
 
   return Promise.resolve();
 }
@@ -174,7 +172,7 @@ function amdify(source, subDependencyMapping) {
         const mapping = subDependencyMapping[requirePath];
         if (!defined(mapping)) {
           throw new Error(
-            `Build Failed: Module sub-dependency found for ${requirePath} with no defined mapping behavior.`
+            `Build Failed: Module sub-dependency found for ${requirePath} with no defined mapping behavior.`,
           );
         }
         removeRequireMapping.push(requireVariable);
@@ -198,7 +196,7 @@ function amdify(source, subDependencyMapping) {
     if (
       Object.prototype.hasOwnProperty.call(
         subdependencyMapping,
-        subdependencyVariable
+        subdependencyVariable,
       )
     ) {
       requireMapping[subdependencyVariable] =
@@ -337,7 +335,7 @@ async function generateThirdParty() {
   for (const packageName in dependencies) {
     if (dependencies.hasOwnProperty(packageName)) {
       const override = thirdPartyExtraJson.find(
-        (entry) => entry.name === packageName
+        (entry) => entry.name === packageName,
       );
       thirdPartyJson.push(getLicenseDataFromPackage(packageName, override));
     }
@@ -357,6 +355,6 @@ async function generateThirdParty() {
 
   fsExtra.writeFileSync(
     "ThirdParty.json",
-    JSON.stringify(thirdPartyJson, null, 2)
+    JSON.stringify(thirdPartyJson, null, 2),
   );
 }
