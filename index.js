@@ -6,5 +6,5 @@ module.exports = {
   gltfToGlb: require("./lib/gltfToGlb"),
   processGlb: require("./lib/processGlb"),
   processGltf: require("./lib/processGltf"),
-  removeExtension: require("./lib/removeExtension"),
+  removeExtension: require("./lib/removeExtension")
 };
